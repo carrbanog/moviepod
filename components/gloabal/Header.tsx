@@ -1,12 +1,17 @@
-"use client";
-
 import Link from "next/link";
+import { getServerSession } from "next-auth/next";
+import AuthButton from '../domain/AuthButton';
 
-export default function Header() {
-  // 추후 NextAuth 세션 상태에 따라 로그인/로그아웃 버튼을 스위칭할 예정입니다.
-  const handleLogin = () => {
-    console.log("로그인 프로세스 시작");
-  };
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+export default async function Header() {
+  let session = null;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (error) {
+    console.error("세션을 가져오는 중 오류 발생:", error);
+  }
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -21,12 +26,7 @@ export default function Header() {
         </Link>
         {/* 네비게이션 및 인터랙션 요소 */}
         <div className="flex items-center space-x-4">
-          <button
-            onClick={handleLogin}
-            className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          >
-            로그인
-          </button>
+          <AuthButton session={session} />
         </div>
       </div>
     </header>
