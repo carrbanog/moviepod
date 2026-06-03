@@ -20,7 +20,7 @@ export const authOptions: AuthOptions = {
   // 💡 콜백 규칙 추가
   callbacks: {
     async signIn({ user, account }) {
-      console.log("signIn 콜백 호출, user:", user, "account:", account);
+      // console.log("signIn 콜백 호출, user:", user, "account:", account);
       if (account?.provider === "google" && user.email) {
         try {
 
