@@ -12,13 +12,18 @@ export const authOptions: AuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    error:"/"
+  },
   
+
   // 💡 콜백 규칙 추가
   callbacks: {
     async signIn({ user, account }) {
       console.log("signIn 콜백 호출, user:", user, "account:", account);
       if (account?.provider === "google" && user.email) {
         try {
+
           await connectDB(); // 1단계에서 만든 DB 연결 함수 호출
 
           await User.findOneAndUpdate(

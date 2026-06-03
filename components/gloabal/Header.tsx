@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import AuthButton from '../domain/AuthButton';
+import {toast} from "sonner"
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 

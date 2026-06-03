@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
+import { Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/gloabal/Header";
 import AuthProvider from "@/components/domain/AuthProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import { Toaster } from "sonner";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+
 
 export const metadata: Metadata = {
   title: "MoviePod",
@@ -23,7 +17,7 @@ export const bebasNeue = Bebas_Neue({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-logo",
-})
+});
 
 export default function RootLayout({
   children,
@@ -31,10 +25,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body
-        className={`${bebasNeue.variable} antialiased`}
-      >
+    <html lang="ko" className="dark">
+      <body className={`${bebasNeue.variable} antialiased`}>
+        <Toaster richColors position="top-right" theme='system' />
         <AuthProvider>
           <Header />
 
