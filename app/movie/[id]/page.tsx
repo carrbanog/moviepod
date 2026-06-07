@@ -1,6 +1,7 @@
 // app/movie/[id]/page.tsx
 import Image from "next/image";
 import { getMovieDetail } from "@/services/tmdb";
+import FavoriteButton from "@/components/domain/FavoriteButton";
 
 interface MovieDetailPageProps {
   params: Promise<{ id: string }>;
@@ -11,7 +12,7 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
   
   // 💡 id를 이용해 서버에서 영화 상세 데이터를 직접 가져옵니다.
   const movie = await getMovieDetail(id);
-  console.log("Fetched movie detail:", movie); // 데이터가 제대로 로드되는지 확인하는 로그
+  console.log("Fetched movie detail:", movie); // 디버깅용 로그
   return (
     <div className="container mx-auto px-4 py-10">
       <div className="flex flex-col gap-8 md:flex-row">
@@ -30,6 +31,10 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
         {/* 영화 상세 정보 텍스트 영역 */}
         <div className="flex flex-col justify-center space-y-4">
           <h1 className="text-4xl font-bold">{movie.title}</h1>
+
+          <div>
+            <FavoriteButton />
+          </div>
           
           {movie.tagline && (
             <p className="text-lg italic text-muted-foreground">"{movie.tagline}"</p>

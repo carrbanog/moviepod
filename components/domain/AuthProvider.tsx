@@ -1,16 +1,27 @@
-'use client'; // 👈 Context를 쓰기 위해 반드시 필요합니다.
+// components/domain/AuthProvider.tsx
+"use client";
 
+import { useState } from "react";
 import { SessionProvider } from "next-auth/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-interface AuthProviderProps {
-  children: React.ReactNode;
-}
+export default function AuthProvider({ children }: { children: React.ReactNode }) {
+  // [최적화 측정 포인트] useState를 사용해 SSR 환경에서 
+  // QueryClient 인스턴스가 불필요하게 재생성되는 것을 방지합니다.
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 5, // 5분 동안 데이터를 신선(fresh)하게 유지
+        refetchOnWindowFocus: false, // 브라우저 창 탭을 전환했다가 돌아올 때 자동 리페치 방지
+      },
+    },
+  }));
 
-export default function AuthProvider({ children }: AuthProviderProps) {
   return (
-    // SessionProvider가 하위 컴포넌트(children)들에게 로그인 상태를 공급해 줍니다.
     <SessionProvider>
-      {children}
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
     </SessionProvider>
   );
 }
