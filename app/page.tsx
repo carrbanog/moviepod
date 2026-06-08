@@ -1,6 +1,6 @@
-import PopularMovieList from "@/components/domain/PopularMovieList";
+import PopularMovieList from "@/components/domain/movie/PopularMovieList";
 import { Suspense } from "react";
-import PopularMovieListSkeleton from "@/components/domain/PopularMovieListSkeleton";
+import PopularMovieListSkeleton from "@/components/domain/movie/PopularMovieListSkeleton";
 
 export default function Home() {
   return (

@@ -1,0 +1,32 @@
+import { getPopularMovies } from "@/services/tmdb";
+import MovieCard from "./MovieCard";
+import { AlertCircle } from "lucide-react"; // 아이콘 (shadcn/ui 기본 포함)
+
+export default async function PopularMovieList() {
+  try {
+    const data = await getPopularMovies();
+    const movies = data.results.slice(0, 10); 
+
+    return (
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {movies.map((movie) => (
+          <MovieCard key={movie.id} movie={movie} />
+        ))}
+      </div>
+    );
+  } catch (error) {
+    console.error("인기 영화 로딩 실패:", error);
+
+    return (
+      <div className="col-span-full flex min-h-[200px] flex-col items-center justify-center rounded-lg border border-dashed bg-muted/20 p-8 text-center">
+        <AlertCircle className="mb-2 h-8 w-8 text-muted-foreground" />
+        <p className="text-sm font-medium text-muted-foreground">
+          인기 영화 목록을 불러오지 못했습니다.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          새로고침을 하거나 잠시 후 다시 시도해 주세요.
+        </p>
+      </div>
+    );
+  }
+}

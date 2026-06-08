@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
-import AuthButton from '../domain/AuthButton';
+import AuthButton from '../domain/auth/AuthButton';
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
