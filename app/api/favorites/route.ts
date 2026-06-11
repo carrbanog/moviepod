@@ -4,18 +4,30 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import {connectDB} from "@/lib/db";
 import User from "@/models/User";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
+    
     if (!session?.user?.email) {
-      return NextResponse.json({ favorites: [] }, { status: 200 });
+      return NextResponse.json([], { status: 200 }); 
     }
-    console.log("Session in GET /api/favorites:", session); // 디버깅용 로그
+
     await connectDB();
-    const user = await User.findOne({ email: session.user.email });
-    return NextResponse.json({ favorites: user?.favorites || [] });
+    const userWithFavorites = await User.findOne(
+      { email: session.user.email },
+      { favorites: 1 }
+    ).lean();
+
+    const favoriteMovies = userWithFavorites?.favorites || [];
+    
+    // 배열 자체를 반환하여 프론트엔드 매핑을 쉽게 만듭니다.
+    return NextResponse.json(favoriteMovies);
   } catch (error) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("찜한 영화 목록 조회 API 에러:", error);
+    return NextResponse.json(
+      { error: "서버 내부 에러가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }
 

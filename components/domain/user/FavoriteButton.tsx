@@ -1,13 +1,15 @@
-'use client';
+"use client";
 
-import { useSession } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
-import { Heart } from 'lucide-react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FavoriteMovieResponse, MovieDetailResponse } from '@/type/movie';
+import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Heart } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { FavoriteMovieResponse, MovieDetailResponse } from "@/type/movie";
+import {toast} from "sonner";
+
 
 interface FavoriteButtonProps {
-  movie: MovieDetailResponse; // 💡 부모(상세 페이지)에서 영화 전체 데이터를 받아옵니다.
+  movie: MovieDetailResponse;
 }
 
 export default function FavoriteButton({ movie }: FavoriteButtonProps) {
@@ -21,7 +23,8 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
       const res = await fetch("/api/favorites");
       if (!res.ok) throw new Error("Failed to fetch favorites");
       const data = await res.json();
-      return data.favorites;
+      console.log("좋아요 버튼 테스트", data);
+      return data;
     },
     enabled: !!session?.user, // 로그인 상태일 때만 실행
   });
@@ -36,34 +39,43 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // 💡 DB 저장을 위해 영화 객체 통째로 API에 전송합니다.
-        body: JSON.stringify({ movie }), 
+        body: JSON.stringify({ movie }),
       });
-      if (!res.ok) throw new Error("Failed to toggle favorite");
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.log("좋아요 버튼 에러 테스트",errorData)
+        throw new Error(errorData.error || "알 수 없는 오류가 발생했습니다.");
+      }
       return res.json();
     },
     // [성능 최적화] 서버 응답을 기다리지 않고 화면의 하트를 즉시 변경합니다.
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["favorites"] });
-      
+
       // 기존 캐시 백업
-      const previousFavorites = queryClient.getQueryData<FavoriteMovieResponse[]>(["favorites"]);
+      const previousFavorites = queryClient.getQueryData<
+        FavoriteMovieResponse[]
+      >(["favorites"]);
 
       // UI 강제 업데이트
-      queryClient.setQueryData<FavoriteMovieResponse[]>(["favorites"], (old = []) => {
-        if (old.some((fav) => fav.movieId === movieIdStr)) {
-          // 이미 찜한 상태면 목록에서 제거
-          return old.filter((fav) => fav.movieId !== movieIdStr);
-        } else {
-          // 안 한 상태면 목록에 임시 추가 (화면 표시용)
-          const newFav = {
-            movieId: movieIdStr,
-            title: movie.title,
-            poster_path: movie.poster_path,
-            genres: movie.genres,
-          } as FavoriteMovieResponse;
-          return [...old, newFav];
-        }
-      });
+      queryClient.setQueryData<FavoriteMovieResponse[]>(
+        ["favorites"],
+        (old = []) => {
+          if (old.some((fav) => fav.movieId === movieIdStr)) {
+            // 이미 찜한 상태면 목록에서 제거
+            return old.filter((fav) => fav.movieId !== movieIdStr);
+          } else {
+            // 안 한 상태면 목록에 임시 추가 (화면 표시용)
+            const newFav = {
+              movieId: movieIdStr,
+              title: movie.title,
+              poster_path: movie.poster_path,
+              genres: movie.genres,
+            } as FavoriteMovieResponse;
+            return [...old, newFav];
+          }
+        },
+      );
 
       return { previousFavorites };
     },
@@ -72,7 +84,9 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
       if (context?.previousFavorites) {
         queryClient.setQueryData(["favorites"], context.previousFavorites);
       }
+      toast.error(err.message);
     },
+
     // 최종적으로 서버 데이터와 다시 동기화
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
@@ -93,12 +107,16 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
     <Button
       variant={isFavorite ? "default" : "outline"}
       className={`gap-2 transition-colors ${
-        isFavorite ? "bg-red-500 text-white hover:bg-red-600 border-red-500" : ""
+        isFavorite
+          ? "bg-red-500 text-white hover:bg-red-600 border-red-500"
+          : ""
       }`}
       disabled={toggleFavoriteMutation.isPending}
       onClick={() => toggleFavoriteMutation.mutate()}
     >
-      <Heart className={`h-4 w-4 ${isFavorite ? "fill-current text-white" : ""}`} />
+      <Heart
+        className={`h-4 w-4 ${isFavorite ? "fill-current text-white" : ""}`}
+      />
       {isFavorite ? "찜 완료" : "내 보관함에 저장"}
     </Button>
   );

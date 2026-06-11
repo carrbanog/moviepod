@@ -1,6 +1,8 @@
 import { getPopularMovies } from "@/services/tmdb";
 import MovieCard from "./MovieCard";
 import { AlertCircle } from "lucide-react"; // 아이콘 (shadcn/ui 기본 포함)
+import { Movie } from "@/type/movie";
+
 
 export default async function PopularMovieList() {
   try {
@@ -9,8 +11,13 @@ export default async function PopularMovieList() {
 
     return (
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+        {movies.map((movie: Movie) => (
+          <MovieCard key={movie.id} 
+            id={movie.id}
+            title={movie.title}
+            poster_path={movie.poster_path}
+            // release_date={movie.release_date}
+          />
         ))}
       </div>
     );

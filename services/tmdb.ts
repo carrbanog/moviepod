@@ -24,7 +24,6 @@ export async function getPopularMovies(): Promise<MovieResponse> {
 
 
 export async function getMovieDetail(id: string): Promise<MovieDetailResponse> {
-  await delay(2000); // [의도적 지연] LCP 최적화 측정용으로 API 응답에 딜레이를 추가합니다. 실제 배포 시 제거하거나 조절하세요.
   const res = await fetch(
     `${TMDB_BASE_URL}/movie/${id}?language=ko-KR&api_key=${API_KEY}`,
     { next: { revalidate: 3600 } }
