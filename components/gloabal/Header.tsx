@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import AuthButton from '../domain/auth/AuthButton';
+import SearchBar from "@/components/domain/search/SearchBar";
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -24,6 +25,11 @@ export default async function Header() {
         >
           MOVIEPOD
         </Link>
+
+        <div className="flex-1 flex justify-center">
+          <SearchBar />
+        </div>
+
         {/* 네비게이션 및 인터랙션 요소 */}
         <div className="flex items-center space-x-4">
           <AuthButton session={session} />
