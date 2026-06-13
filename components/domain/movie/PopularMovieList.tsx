@@ -1,7 +1,8 @@
 import { getPopularMovies } from "@/services/tmdb";
 import MovieCard from "./MovieCard";
-import { AlertCircle } from "lucide-react"; // 아이콘 (shadcn/ui 기본 포함)
 import { Movie } from "@/type/movie";
+import ErrorFallback from "@/components/domain/layout/ErrorFallback";
+
 
 
 export default async function PopularMovieList() {
@@ -23,17 +24,6 @@ export default async function PopularMovieList() {
     );
   } catch (error) {
     console.error("인기 영화 로딩 실패:", error);
-
-    return (
-      <div className="col-span-full flex min-h-[200px] flex-col items-center justify-center rounded-lg border border-dashed bg-muted/20 p-8 text-center">
-        <AlertCircle className="mb-2 h-8 w-8 text-muted-foreground" />
-        <p className="text-sm font-medium text-muted-foreground">
-          인기 영화 목록을 불러오지 못했습니다.
-        </p>
-        <p className="text-xs text-muted-foreground">
-          새로고침을 하거나 잠시 후 다시 시도해 주세요.
-        </p>
-      </div>
-    );
+    return <ErrorFallback message="인기 영화 목록을 불러오는 중 문제가 발생했습니다." />
   }
 }

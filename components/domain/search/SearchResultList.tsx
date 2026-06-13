@@ -1,5 +1,7 @@
 import MovieCard from "@/components/domain/movie/MovieCard";
+import ErrorFallback from "@/components/domain/layout/ErrorFallback";
 import { Movie } from "@/type/movie";
+
 
 
 export default async function SearchResultList({ query }: { query: string }) {
@@ -17,11 +19,7 @@ export default async function SearchResultList({ query }: { query: string }) {
     movies = data.results;
   } catch (error) {
     console.error(error);
-    return (
-      <div className="py-20 mt-8 text-center text-red-500 border border-red-200 border-dashed rounded-xl bg-red-50/50">
-        데이터를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.
-      </div>
-    );
+    return <ErrorFallback message="서버 통신 중 문제가 발생했습니다." />
   }
 
   if (movies.length === 0) {
