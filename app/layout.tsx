@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Bebas_Neue } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/gloabal/Header";
+import Header from "@/components/domain/layout/Header"
 import AuthProvider from "@/components/domain/auth/AuthProvider";
 
 import { Toaster } from "sonner";

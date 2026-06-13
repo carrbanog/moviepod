@@ -20,7 +20,7 @@ export default function MovieCard({ id, title, poster_path,}: MovieCardProps) {
           alt={title}
           fill
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-          className="object-cover transition-opacity group-hover:opacity-80" // 마우스 오버 시 살짝 투명해지는 효과 추가
+          className="object-cover transition-opacity group-hover:opacity-80"
         />
       </div>
       <div className="mt-2 space-y-1">

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import SearchResultList from "@/components/domain/search/SearchResultList";
-import SearchResultSkeleton from "@/components/domain/search/SearchResultSkeleton";
+import MovieListSkeleton from "@/components/domain/movie/MovieListSkeleton";
 
 export default async function SearchResultPage({
   searchParams,
@@ -24,7 +24,7 @@ export default async function SearchResultPage({
         "{query}" 검색 결과
       </h1>
 
-      <Suspense key={query} fallback={<SearchResultSkeleton />}>
+      <Suspense key={query} fallback={<MovieListSkeleton />}>
         <SearchResultList query={query} />
       </Suspense>
     </div>
