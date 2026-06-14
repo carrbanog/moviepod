@@ -1,26 +1,12 @@
 import MovieCard from "@/components/domain/movie/MovieCard";
 import ErrorFallback from "@/components/domain/layout/ErrorFallback";
+import { searchMovies } from "@/services/tmdb";
 import { Movie } from "@/type/movie";
 
 
 
 export default async function SearchResultList({ query }: { query: string }) {
-  const API_KEY = process.env.TMDB_API_KEY;
-  let movies = [];
-  try {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&language=ko-KR&page=1&api_key=${API_KEY}`,
-      {
-        cache: "no-store",
-      },
-    );
-
-    const data = await res.json();
-    movies = data.results;
-  } catch (error) {
-    console.error(error);
-    return <ErrorFallback message="서버 통신 중 문제가 발생했습니다." />
-  }
+  const movies = await searchMovies(query);
 
   if (movies.length === 0) {
     return (
