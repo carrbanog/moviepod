@@ -6,6 +6,7 @@ import MovieCardSkeleton from "@/components/domain/movie/MovieCardSkeleton";
 import { FavoriteMovieResponse } from "@/type/movie";
 import MovieCard from "@/components/domain/movie/MovieCard";
 import ErrorFallback from "@/components/domain/layout/ErrorFallback";
+import { getFavoriteMovies } from '@/services/tmdb';
 
 export default function FavoriteMoviesList() {
   const { data: session } = useSession();
@@ -17,29 +18,7 @@ export default function FavoriteMoviesList() {
     error,
   } = useQuery<FavoriteMovieResponse[], Error>({
     queryKey: ["favorites"],
-    queryFn: async () => {
-      const res = await fetch("/api/favorites");
-
-      // 💡 1. 상단에서 res.ok를 먼저 체크하여 HTML 파싱 시도를 원천 차단합니다.
-      if (!res.ok) {
-        try {
-          const errorData = await res.json();
-          throw new Error(
-            errorData.error || "데이터를 처리하는 중 오류가 발생했습니다.",
-          );
-        } catch (jsonError) {
-          // 💡 2. [UX 안전망] 주소가 틀리거나 서버가 터져서 HTML 에러 페이지를 뱉었을 때 처리
-          if (res.status === 404) {
-            throw new Error("요청하신 서비스를 찾을 수 없습니다. (404)");
-          }
-          throw new Error(
-            "서버와의 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.",
-          );
-        }
-      }
-
-      return res.json();
-    },
+    queryFn: getFavoriteMovies,
     enabled: !!session?.user,
     retry: false, // 에러 테스트 시 딜레이를 없애기 위해 추가 (선택사항)
   });
