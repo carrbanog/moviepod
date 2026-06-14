@@ -10,6 +10,7 @@ const FavoriteMovieSchema = new Schema({
       name: { type: String }
     }
   ],
+  release_date: { type: String },
   addedAt: { type: Date, default: Date.now },
 })
 

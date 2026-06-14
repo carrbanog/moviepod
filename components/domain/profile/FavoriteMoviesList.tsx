@@ -77,6 +77,7 @@ export default function FavoriteMoviesList() {
               id={movie.movieId}
               title={movie.title}
               poster_path={movie.poster_path}
+              release_date={movie.release_date}
             />
           ))}
         </div>

@@ -10,7 +10,7 @@ interface MovieDetailContainerProps {
 export default async function MovieDetailContainer({ id }: MovieDetailContainerProps) {
   // 💡 id를 이용해 서버에서 영화 상세 데이터를 직접 가져옵니다.
   const movie = await getMovieDetail(id);
-
+  console.log("영화 상세 정보", movie)
   return (
     <div className="flex flex-col gap-8 md:flex-row">
       {/* 포스터 이미지 영역 */}

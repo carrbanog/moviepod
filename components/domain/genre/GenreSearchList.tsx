@@ -53,6 +53,8 @@ export default async function GenreMovieList({ genreId }: { genreId: string }) {
             id={movie.id}
             title={movie.title}
             poster_path={movie.poster_path}
+            priority={index < 10}
+            release_date={movie.release_date}
           />
         ))}
       </div>

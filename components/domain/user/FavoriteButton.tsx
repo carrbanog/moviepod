@@ -71,6 +71,7 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
               title: movie.title,
               poster_path: movie.poster_path,
               genres: movie.genres,
+              release_date: movie.release_date,
             } as FavoriteMovieResponse;
             return [...old, newFav];
           }

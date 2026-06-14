@@ -61,6 +61,7 @@ export async function POST(request: Request) {
         title: movie.title,
         poster_path: movie.poster_path,
         genres: movie.genres || [],
+        release_date: movie.release_date,
       })
     }
     console.log("Updated favorites for user:", user); // 디버깅용 로그

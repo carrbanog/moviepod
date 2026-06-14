@@ -23,7 +23,7 @@ export interface MovieDetailResponse extends Movie {
 
 export type FavoriteMovieResponse = Pick<
   MovieDetailResponse, 
-  'id' | 'title' | 'poster_path' | 'genres'
+  'id' | 'title' | 'poster_path' | 'genres' | 'release_date'
 > & {
   // DB 관리용 필드나 찜한 시간 같은 커스텀 필드를 & 연산자로 가볍게 추가할 수 있습니다.
   movieId: string; 

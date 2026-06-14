@@ -12,12 +12,13 @@ export default async function PopularMovieList() {
 
     return (
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {movies.map((movie: Movie) => (
+        {movies.map((movie: Movie, index: number) => (
           <MovieCard key={movie.id} 
             id={movie.id}
             title={movie.title}
             poster_path={movie.poster_path}
-            // release_date={movie.release_date}
+            priority={index < 5}
+            release_date={movie.release_date}
           />
         ))}
       </div>
