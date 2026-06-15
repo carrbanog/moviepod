@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Movie } from "@/type/movie";
+import {memo} from "react"
 import  Link from "next/link"; 
 interface MovieCardProps {
   id: string | number;
@@ -9,7 +9,7 @@ interface MovieCardProps {
   release_date: string;
 }
 
-export default function MovieCard({ id, title, poster_path, priority, release_date }: MovieCardProps) {
+function MovieCard({ id, title, poster_path, priority, release_date }: MovieCardProps) {
   return (
     <Link
       href={`/movie/${id}`}
@@ -33,3 +33,5 @@ export default function MovieCard({ id, title, poster_path, priority, release_da
     </Link>
   );
 }
+
+export default (MovieCard);
