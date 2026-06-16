@@ -8,10 +8,10 @@ import { getTopFavoriteGenre } from "@/services/user";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  let topGenreId = null;
+  let topGenre = null;
 
   if (session?.user?.email) {
-    topGenreId = await getTopFavoriteGenre(session.user.email);
+    topGenre = await getTopFavoriteGenre(session.user.email);
   }
 
   return (
@@ -37,15 +37,15 @@ export default async function Home() {
       </section>
 
       {/* 유저 맞춤 장르 영역 */}
-      {topGenreId && (
+      {topGenre && (
         <section className="mt-16 space-y-6">
           <h2 className="text-2xl font-bold tracking-tight">
-            {session?.user?.name}님이 좋아하는 장르 맞춤 추천 🎬
+            {session?.user?.name}님이 좋아하는 {topGenre.name} 장르 맞춤 추천 🎬
           </h2>
           <Suspense
             fallback={<MovieListSkeleton count={10} showTitle={false} />}
           >
-            <FavoriteGenreMovieList genreId={topGenreId} />
+            <FavoriteGenreMovieList genreId={topGenre.id} />
           </Suspense>
         </section>
       )}
