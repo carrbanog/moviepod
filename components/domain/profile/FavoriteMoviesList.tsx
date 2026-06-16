@@ -6,7 +6,7 @@ import MovieCardSkeleton from "@/components/domain/movie/MovieCardSkeleton";
 import { FavoriteMovieResponse } from "@/type/movie";
 import MovieCard from "@/components/domain/movie/MovieCard";
 import ErrorFallback from "@/components/domain/layout/ErrorFallback";
-import { getFavoriteMovies } from '@/services/tmdb';
+import { getFavoriteMovies } from '@/services/client-api';
 
 export default function FavoriteMoviesList() {
   const { data: session } = useSession();
@@ -18,7 +18,7 @@ export default function FavoriteMoviesList() {
     error,
   } = useQuery<FavoriteMovieResponse[], Error>({
     queryKey: ["favorites"],
-    queryFn: getFavoriteMovies,
+    queryFn: () => getFavoriteMovies(),
     enabled: !!session?.user,
     retry: false, // 에러 테스트 시 딜레이를 없애기 위해 추가 (선택사항)
   });
