@@ -1,8 +1,19 @@
 import PopularMovieList from "@/components/domain/home/PopularMovieList";
+import FavoriteGenreMovieList from "@/components/domain/home/FavoriteGenreMovieList";
 import { Suspense } from "react";
 import MovieListSkeleton from "@/components/domain/movie/MovieListSkeleton";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
+import { getTopFavoriteGenre } from "@/services/user";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+  let topGenreId = null;
+
+  if (session?.user?.email) {
+    topGenreId = await getTopFavoriteGenre(session.user.email);
+  }
+
   return (
     <main className="container mx-auto px-4 py-10">
       {/* 기존 환영 문구 영역 */}
@@ -16,7 +27,7 @@ export default function Home() {
       </div>
 
       {/* 인기 영화 섹션 */}
-      <section className="mt-8 space-y-6">
+      <section className="mt-8 space-y-6 ">
         <h2 className="text-2xl font-bold tracking-tight">
           요즘 뜨는 인기 영화
         </h2>
@@ -24,6 +35,20 @@ export default function Home() {
           <PopularMovieList />
         </Suspense>
       </section>
+
+      {/* 유저 맞춤 장르 영역 */}
+      {topGenreId && (
+        <section className="mt-16 space-y-6">
+          <h2 className="text-2xl font-bold tracking-tight">
+            {session?.user?.name}님이 좋아하는 장르 맞춤 추천 🎬
+          </h2>
+          <Suspense
+            fallback={<MovieListSkeleton count={10} showTitle={false} />}
+          >
+            <FavoriteGenreMovieList genreId={topGenreId} />
+          </Suspense>
+        </section>
+      )}
     </main>
   );
 }

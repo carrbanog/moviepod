@@ -1,7 +1,7 @@
 "use server"
 
 import { MovieResponse } from "@/type/movie";
-import { MovieDetailResponse, FavoriteMovieResponse } from "@/type/movie";
+import { MovieDetailResponse } from "@/type/movie";
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -59,7 +59,7 @@ export async function searchMovies(query: string) {
 // }
 
 //장르 검색 최적화 후
-export async function getMoviesByGenre(genreId: string, page: number) {
+export async function getMoviesByGenre(genreId: string , page: number) {
   const res = await fetch(
     `${TMDB_BASE_URL}/discover/movie?with_genres=${genreId}&language=ko-KR&page=${page}&sort_by=popularity.desc&api_key=${API_KEY}`,
     { next: { revalidate: 3600 } }, 
@@ -73,30 +73,6 @@ export async function getMoviesByGenre(genreId: string, page: number) {
   return data.results;
 }
 
-// 좋아요 리스트
-export async function getFavoriteMovies(): Promise<FavoriteMovieResponse[]> {
-  const res = await fetch("/api/favorites");
-
-  // 💡 컴포넌트 내부에 있던 복잡한 에러 핸들링 로직이 이쪽으로 이사 왔습니다.
-  if (!res.ok) {
-    try {
-      const errorData = await res.json();
-      throw new Error(
-        errorData.error || "데이터를 처리하는 중 오류가 발생했습니다.",
-      );
-    } catch (jsonError) {
-      // JSON 파싱에 실패했을 때 (HTML 에러 페이지가 왔을 때)의 방어선
-      if (res.status === 404) {
-        throw new Error("요청하신 서비스를 찾을 수 없습니다. (404)");
-      }
-      throw new Error(
-        "서버와의 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.",
-      );
-    }
-  }
-
-  return res.json();
-}
 
 export async function getMovieDetail(id: string): Promise<MovieDetailResponse> {
   const res = await fetch(
