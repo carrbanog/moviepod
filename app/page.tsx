@@ -1,6 +1,6 @@
 import PopularMovieList from "@/components/domain/movie/PopularMovieList";
 import { Suspense } from "react";
-import PopularMovieListSkeleton from "@/components/domain/movie/PopularMovieListSkeleton";
+import MovieListSkeleton from "@/components/domain/movie/MovieListSkeleton";
 
 export default function Home() {
   return (
@@ -20,7 +20,7 @@ export default function Home() {
         <h2 className="text-2xl font-bold tracking-tight">
           요즘 뜨는 인기 영화
         </h2>
-        <Suspense fallback={<PopularMovieListSkeleton count={10} />}>
+        <Suspense fallback={<MovieListSkeleton count={10} showTitle={false} />}>
           <PopularMovieList />
         </Suspense>
       </section>

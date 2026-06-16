@@ -19,7 +19,10 @@ export default async function GenrePage({
   return (
     <div className="container mx-auto py-10 px-4">
       <h1 className="text-2xl font-bold">"{genreName}" 장르 검색 결과</h1>
-      <Suspense key={id} fallback={<MovieListSkeleton />}>
+      <Suspense
+        key={id}
+        fallback={<MovieListSkeleton count={10} showTitle={true} />}
+      >
         <GenreSearchContainer genreId={id} />
       </Suspense>
     </div>

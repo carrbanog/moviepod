@@ -20,11 +20,12 @@ export default async function SearchResultPage({
 
   return (
     <div className="container mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold">
-        "{query}" 검색 결과
-      </h1>
+      <h1 className="text-2xl font-bold">"{query}" 검색 결과</h1>
 
-      <Suspense key={query} fallback={<MovieListSkeleton />}>
+      <Suspense
+        key={query}
+        fallback={<MovieListSkeleton count={10} showTitle={true} />}
+      >
         <SearchResultList query={query} />
       </Suspense>
     </div>
