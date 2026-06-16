@@ -10,7 +10,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export async function getPopularMovies(): Promise<MovieResponse> {
   // [최적화 측정 포인트] Next.js의 fetch 캐싱(revalidate)을 활용합니다.
   // 배포 후 데이터 갱신 주기와 LCP 등을 측정해 캐싱 시간을 조절할 수 있습니다.
-  // await delay(800);
+  await delay(800);
   const res = await fetch(
     `${TMDB_BASE_URL}/movie/popular?language=ko-KR&page=1&api_key=${API_KEY}`,
     { next: { revalidate: 3600 } },
