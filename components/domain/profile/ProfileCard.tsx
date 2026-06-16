@@ -7,7 +7,7 @@ interface ProfileCardProps {
 
 export default function ProfileCard({ user }: ProfileCardProps) {
   return (
-    <div className="bg-card p-6 rounded-xl border shadow-sm flex items-center gap-6">
+    <section className="bg-card p-6 rounded-xl border shadow-sm flex items-center gap-6">
       {user?.image ? (
         <Image
           src={user.image}
@@ -25,11 +25,11 @@ export default function ProfileCard({ user }: ProfileCardProps) {
 
       {/* 유저 정보 렌더링 */}
       <div>
-        <p className="text-2xl font-semibold">{user.name ?? "이름 없음"}</p>
+        <h2 className="text-2xl font-semibold">{user.name ?? "이름 없음"}</h2>
         <p className="text-muted-foreground">
           {user.email ?? "이메일 정보 없음"}
         </p>
       </div>
-    </div>
+    </section>
   );
 }

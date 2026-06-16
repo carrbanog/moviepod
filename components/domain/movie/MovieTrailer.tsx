@@ -9,7 +9,7 @@ export default function MovieTrailer({
 }: MovieTrailerProps) {
   return (
     <div className="mt-4 space-y-4">
-      <div className="relative w-full overflow-hidden rounded-xl border bg-black aspect-video">
+      <figure className="relative w-full overflow-hidden rounded-xl border bg-black aspect-video">
         <iframe
           src={`https://www.youtube.com/embed/${trailerKey}?rel=0`}
           title={`${movieTitle} 공식 예고편`}
@@ -18,7 +18,7 @@ export default function MovieTrailer({
           className="absolute top-0 left-0 h-full w-full border-0"
           tabIndex={-1} //화면 위치를 중간으로 내리는걸 제외
         />
-      </div>
+      </figure>
     </div>
   );
 }

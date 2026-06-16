@@ -3,8 +3,6 @@ import ErrorFallback from "@/components/domain/layout/ErrorFallback";
 import { searchMovies } from "@/services/tmdb";
 import { Movie } from "@/type/movie";
 
-
-
 export default async function SearchResultList({ query }: { query: string }) {
   const movies = await searchMovies(query);
 
@@ -22,18 +20,19 @@ export default async function SearchResultList({ query }: { query: string }) {
         총 {movies.length}개의 결과를 찾았습니다.
       </p>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+      <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {movies.map((movie: Movie, index: number) => (
-          <MovieCard
-            key={movie.id}
-            id={movie.id}
-            title={movie.title}
-            poster_path={movie.poster_path}
-            priority={index < 10}
-            release_date={movie.release_date}
-          />
+          <li key={movie.id}>
+            <MovieCard
+              id={movie.id}
+              title={movie.title}
+              poster_path={movie.poster_path}
+              priority={index < 10}
+              release_date={movie.release_date}
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

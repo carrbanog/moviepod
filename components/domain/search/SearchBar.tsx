@@ -100,12 +100,14 @@ export default function SearchBar() {
       ref={dropdownRef}
     >
       <form
+        role="search"
         onSubmit={handleSearchSubmit}
         className="relative flex w-full max-w-2xl items-center"
       >
         <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
         <input
-          type="text"
+          type="search"
+          aria-label='영화 검색'
           placeholder="보고싶은 영화를 검색해보세요"
           onChange={(e) => setQuery(e.target.value)}
           value={query}

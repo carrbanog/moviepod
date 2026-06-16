@@ -51,11 +51,11 @@ export default function SearchDropdown({
                   <span className="truncate text-sm font-medium">
                     {movie.title}
                   </span>
-                  <span className="text-xs text-muted-foreground">
+                  <time className="text-xs text-muted-foreground">
                     {movie.release_date
                       ? movie.release_date.substring(0, 4)
                       : "미정"}
-                  </span>
+                  </time>
                 </div>
               </Link>
             </li>
@@ -63,7 +63,7 @@ export default function SearchDropdown({
         </ul>
       ) : (
         <div className="p-4 text-center text-sm text-muted-foreground">
-          일치하는 영화가 없습니다.
+          <p>일치하는 영화가 없습니다.</p>
         </div>
       )}
     </div>

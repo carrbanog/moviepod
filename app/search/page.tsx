@@ -12,14 +12,14 @@ export default async function SearchResultPage({
 
   if (!query) {
     return (
-      <div className="container mx-auto py-20 text-center text-muted-foreground">
-        검색어를 입력해주세요.
-      </div>
+      <section className="container mx-auto py-20 text-center text-muted-foreground">
+        <p>검색어를 입력해주세요.</p>
+      </section>
     );
   }
 
   return (
-    <div className="container mx-auto py-10 px-4">
+    <main className="container mx-auto py-10 px-4">
       <h1 className="text-2xl font-bold">"{query}" 검색 결과</h1>
 
       <Suspense
@@ -28,6 +28,6 @@ export default async function SearchResultPage({
       >
         <SearchResultList query={query} />
       </Suspense>
-    </div>
+    </main>
   );
 }

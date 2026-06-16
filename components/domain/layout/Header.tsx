@@ -17,7 +17,7 @@ export default async function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <nav className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* 서비스 이름 및 로고 링크 */}
         <Link
           href="/"
@@ -37,7 +37,7 @@ export default async function Header() {
           
           <GenreSidebar />
         </div>
-      </div>
+      </nav>
     </header>
   );
 }

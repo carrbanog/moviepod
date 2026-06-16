@@ -6,7 +6,7 @@ import MovieCardSkeleton from "@/components/domain/movie/MovieCardSkeleton";
 import { FavoriteMovieResponse } from "@/type/movie";
 import MovieCard from "@/components/domain/movie/MovieCard";
 import ErrorFallback from "@/components/domain/layout/ErrorFallback";
-import { getFavoriteMovies } from '@/services/client-api';
+import { getFavoriteMovies } from "@/services/client-api";
 
 export default function FavoriteMoviesList() {
   const { data: session } = useSession();
@@ -25,14 +25,16 @@ export default function FavoriteMoviesList() {
 
   if (isLoading) {
     return (
-      <div className="mt-12">
+      <section className="mt-12">
         <div className="h-8 w-48 bg-muted rounded mb-6 animate-pulse" />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <MovieCardSkeleton key={index} />
+            <li key={index}>
+              <MovieCardSkeleton />
+            </li>
           ))}
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -41,7 +43,7 @@ export default function FavoriteMoviesList() {
   }
 
   return (
-    <div className="mt-12">
+    <section className="mt-12">
       <h2 className="text-2xl font-bold mb-6 tracking-tight">내가 찜한 영화</h2>
 
       {favorites.length === 0 ? (
@@ -49,18 +51,19 @@ export default function FavoriteMoviesList() {
           <p className="text-muted-foreground">아직 찜한 영화가 없습니다.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {favorites.map((movie) => (
-            <MovieCard
-              key={movie.movieId}
-              id={movie.movieId}
-              title={movie.title}
-              poster_path={movie.poster_path}
-              release_date={movie.release_date}
-            />
+            <li key={movie.movieId}>
+              <MovieCard
+                id={movie.movieId}
+                title={movie.title}
+                poster_path={movie.poster_path}
+                release_date={movie.release_date}
+              />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-    </div>
+    </section>
   );
 }

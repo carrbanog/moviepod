@@ -17,7 +17,7 @@ export default async function GenrePage({
   const genreName = name || "영화";
 
   return (
-    <div className="container mx-auto py-10 px-4">
+    <main className="container mx-auto py-10 px-4">
       <h1 className="text-2xl font-bold">"{genreName}" 장르 검색 결과</h1>
       <Suspense
         key={id}
@@ -25,6 +25,6 @@ export default async function GenrePage({
       >
         <GenreSearchContainer genreId={id} />
       </Suspense>
-    </div>
+    </main>
   );
 }

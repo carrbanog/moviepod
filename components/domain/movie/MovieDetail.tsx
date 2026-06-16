@@ -17,9 +17,9 @@ export default async function MovieDetailContainer({
   ]);
 
   return (
-    <div className="flex flex-col gap-12 w-full">
+    <article className="flex flex-col gap-12 w-full">
       <div className="flex flex-col gap-8 md:flex-row">
-        <div className="relative aspect-[2/3] w-full shrink-0 overflow-hidden rounded-lg md:w-[300px]">
+        <figure className="relative aspect-[2/3] w-full shrink-0 overflow-hidden rounded-lg md:w-[300px]">
           <Image
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title}
@@ -28,7 +28,7 @@ export default async function MovieDetailContainer({
             className="object-cover"
             priority
           />
-        </div>
+        </figure>
 
         {/* 영화 상세 정보 텍스트 영역 */}
         <div className="flex flex-col justify-center space-y-4 flex-1">
@@ -44,28 +44,30 @@ export default async function MovieDetailContainer({
             </p>
           )}
 
-          <div className="flex gap-2 flex-wrap">
+          <ul className="flex gap-2 flex-wrap" aria-label="영화 장르">
             {movie.genres.map((genre) => (
-              <span
+              <li
                 key={genre.id}
                 className="rounded-full bg-secondary px-3 py-1 text-sm"
               >
                 {genre.name}
-              </span>
+              </li>
             ))}
-          </div>
+          </ul>
 
           <p className="text-lg leading-relaxed">{movie.overview}</p>
 
           <div className="text-sm text-muted-foreground">
-            <p>개봉일: {movie.release_date}</p>
+            <p>
+              개봉일: <time>{movie.release_date}</time>
+            </p>
             <p>상영 시간: {movie.runtime}분</p>
             <p>평점: ⭐️ {movie.vote_average.toFixed(1)}</p>
           </div>
         </div>
       </div>
 
-      <div className="border-t pt-8 w-full">
+      <section className="border-t pt-8 w-full">
         <h2 className="text-2xl font-bold mb-4">🎬 메인 예고편</h2>
 
         {trailerKey ? (
@@ -80,7 +82,7 @@ export default async function MovieDetailContainer({
             </p>
           </div>
         )}
-      </div>
-    </div>
+      </section>
+    </article>
   );
 }
