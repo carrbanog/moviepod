@@ -1,5 +1,5 @@
 import { getPopularMovies } from "@/services/tmdb";
-import MovieCard from "./MovieCard";
+import MovieCard from "../movie/MovieCard";
 import { Movie } from "@/type/movie";
 import ErrorFallback from "@/components/domain/layout/ErrorFallback";
 

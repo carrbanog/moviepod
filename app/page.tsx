@@ -1,4 +1,4 @@
-import PopularMovieList from "@/components/domain/movie/PopularMovieList";
+import PopularMovieList from "@/components/domain/home/PopularMovieList";
 import { Suspense } from "react";
 import MovieListSkeleton from "@/components/domain/movie/MovieListSkeleton";
 
