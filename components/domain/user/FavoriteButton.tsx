@@ -3,13 +3,14 @@
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { FavoriteMovieResponse, MovieDetailResponse } from "@/type/movie";
-import {toast} from "sonner";
+import { toast } from "sonner";
 
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { FavoriteMovieResponse, ToggleFavoritePayload } from "@/type/movie";
+import { getFavoritesActions, toggleFavoriteAction } from "@/actions/favorite";
 
 interface FavoriteButtonProps {
-  movie: MovieDetailResponse;
+  movie: ToggleFavoritePayload;
 }
 
 export default function FavoriteButton({ movie }: FavoriteButtonProps) {
@@ -19,13 +20,7 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
   // 1. 유저의 전체 찜 목록 가져오기
   const { data: favorites = [] } = useQuery<FavoriteMovieResponse[]>({
     queryKey: ["favorites"],
-    queryFn: async () => {
-      const res = await fetch("/api/favorites");
-      if (!res.ok) throw new Error("Failed to fetch favorites");
-      const data = await res.json();
-      console.log("좋아요 버튼 테스트", data);
-      return data;
-    },
+    queryFn: () => getFavoritesActions(),
     enabled: !!session?.user, // 로그인 상태일 때만 실행
   });
 
@@ -35,19 +30,16 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
   // 3. 찜하기 토글 (낙관적 업데이트 적용)
   const toggleFavoriteMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch("/api/favorites", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // 💡 DB 저장을 위해 영화 객체 통째로 API에 전송합니다.
-        body: JSON.stringify({ movie }),
-      });
-      if (!res.ok) {
-        const errorData = await res.json();
-        console.log("좋아요 버튼 에러 테스트",errorData)
-        throw new Error(errorData.error || "알 수 없는 오류가 발생했습니다.");
-      }
-      return res.json();
+      const payload: ToggleFavoritePayload = {
+        id: movie.id,
+        title: movie.title,
+        poster_path: movie.poster_path,
+        release_date: movie.release_date,
+        genres: movie.genres, // 없을 경우 undefined로 안전하게 전달됨
+      };
+      return await toggleFavoriteAction(payload);
     },
+
     // [성능 최적화] 서버 응답을 기다리지 않고 화면의 하트를 즉시 변경합니다.
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["favorites"] });

@@ -7,6 +7,7 @@ export default async function PopularMovieList() {
   let movies: Movie[] = [];
   try {
     const data = await getPopularMovies();
+    console.log("인기 영화", data)
     movies = data.results.slice(0, 10);
   } catch (error) {
     console.error("인기 영화 로딩 실패:", error);

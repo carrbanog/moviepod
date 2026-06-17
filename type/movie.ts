@@ -2,6 +2,7 @@
 export interface Movie {
   id: number;
   title: string;
+  genre_ids: number[];
   poster_path: string;  // 영화 포스터 이미지 경로
   release_date: string; // 영화 개봉일
   vote_average: number; // 영화 평점 (0~10)
@@ -23,9 +24,19 @@ export interface MovieDetailResponse extends Movie {
 
 export type FavoriteMovieResponse = Pick<
   MovieDetailResponse, 
-  'id' | 'title' | 'poster_path' | 'genres' | 'release_date'
+  'title' | 'poster_path' | 'genres' | 'release_date'
 > & {
   // DB 관리용 필드나 찜한 시간 같은 커스텀 필드를 & 연산자로 가볍게 추가할 수 있습니다.
+  _id: string;
   movieId: string; 
   addedAt?: string;
 };
+
+// 좋아요 버튼을 누를 때 전달해 줄 movie 타입
+export interface ToggleFavoritePayload {
+  id: number;
+  title: string;
+  poster_path: string;
+  release_date: string;
+  genres?: { id: number; name: string }[];
+}

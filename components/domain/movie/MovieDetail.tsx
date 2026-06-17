@@ -15,7 +15,7 @@ export default async function MovieDetailContainer({
     getMovieDetail(id),
     getMovieTrailer(id),
   ]);
-
+  console.log("영화 상세 정보", movie)
   return (
     <article className="flex flex-col gap-12 w-full">
       <div className="flex flex-col gap-8 md:flex-row">
