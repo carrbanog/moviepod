@@ -2,9 +2,9 @@ import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import AuthButton from '../auth/AuthButton';
 import SearchBar from "@/components/domain/search/SearchBar";
+import { Suspense } from "react";
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-// 💡 방금 새로 만든 드롭다운 컴포넌트를 불러옵니다.
 import GenreSidebar from '@/components/domain/layout/GenreSidebar'; 
 
 export default async function Header() {
@@ -33,7 +33,9 @@ export default async function Header() {
 
         {/* 네비게이션 및 인터랙션 요소 */}
         <div className="flex items-center space-x-4">
-          <AuthButton session={session} />
+          <Suspense fallback={<div className="h-9 w-24 bg-muted rounded-md animate-pulse"></div>}>
+            <AuthButton session={session} />
+          </Suspense>
           
           <GenreSidebar />
         </div>
