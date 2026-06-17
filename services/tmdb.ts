@@ -25,7 +25,6 @@ export async function getPopularMovies(): Promise<MovieResponse> {
 
 // 영화 검색
 export async function searchMovies(query: string) {
-  const API_KEY = process.env.TMDB_API_KEY;
 
   const res = await fetch(
     `${TMDB_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&language=ko-KR&page=1&api_key=${API_KEY}`,

@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Movie } from "@/type/movie";
+import { liveSearchAction } from "@/actions/search";
 import SearchDropdown from "@/components/domain/search/SearchDropdown";
 
 export default function SearchBar() {
@@ -31,45 +32,28 @@ export default function SearchBar() {
       return;
     }
 
-    // 1. AbortController 인스턴스 생성
-    const controller = new AbortController();
-
+    let ignore = false;
     const fetchLiveSearch = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch(
-          `/api/search?q=${encodeURIComponent(debounceQuery)}`,
-          { signal: controller.signal }, // 2. fetch 옵션에 signal 연결
-        );
+        const data = await liveSearchAction(debounceQuery);
 
-        if (res.ok) {
-          const data = await res.json();
-          setResults(data.results?.slice(0, 5) || []);
+        if (!ignore) {
+          setResults(data?.slice(0, 5) || []);
           setIsLoading(false);
           setIsOpen(true);
         }
       } catch (error) {
-        // 1. error가 자바스크립트의 기본 Error 객체인지 확인 (타입 가드)
-        if (error instanceof Error) {
-          if (error.name === "AbortError") {
-            console.log("이전 검색 요청이 취소되었습니다.");
-          } else {
-            // Error 객체가 맞으므로 .message나 .name을 안전하게 사용할 수 있습니다.
-            console.error("검색 중 에러 발생:", error.message);
-          }
-        } else {
-          // 2. Error 객체가 아닌 다른 무언가가 throw 되었을 때의 방어 로직
-          console.error("알 수 없는 에러 발생:", error);
+        if (!ignore) {
+          console.log("검색 중 에러 발생:", error);
+          setIsLoading(false);
         }
       }
     };
     fetchLiveSearch();
 
-    // 3. Cleanup 함수:
-    // debounceQuery가 바뀌어 useEffect가 다시 실행되기 직전이나,
-    // 컴포넌트가 화면에서 사라질 때(Unmount) 이전 fetch 요청을 강제 취소!
     return () => {
-      controller.abort();
+      ignore = true;
     };
   }, [debounceQuery]);
 
@@ -107,7 +91,7 @@ export default function SearchBar() {
         <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
         <input
           type="search"
-          aria-label='영화 검색'
+          aria-label="영화 검색"
           placeholder="보고싶은 영화를 검색해보세요"
           onChange={(e) => setQuery(e.target.value)}
           value={query}
