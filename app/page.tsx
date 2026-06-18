@@ -4,16 +4,17 @@ import { Suspense } from "react";
 import MovieListSkeleton from "@/components/domain/movie/MovieListSkeleton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
-import { getTopFavoriteGenre } from "@/services/user";
+import { getUserGenreStats } from "@/services/user";
+import { GenreStat } from "@/type/movie";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  let topGenre = null;
+  let genreStats: GenreStat[] = [];
 
   if (session?.user?.email) {
-    topGenre = await getTopFavoriteGenre(session.user.email);
+    genreStats = await getUserGenreStats(session.user.email);
   }
-
+  const topGenre = genreStats.length > 0 ? genreStats[0] : null;
   return (
     <main className="container mx-auto px-4 py-10">
       {/* 기존 환영 문구 영역 */}

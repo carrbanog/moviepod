@@ -40,3 +40,9 @@ export interface ToggleFavoritePayload {
   release_date: string;
   genres?: { id: number; name: string }[];
 }
+
+export interface GenreStat {
+  id: number;
+  name: string;
+  count: number;
+}
