@@ -21,7 +21,7 @@ export default function GenreChart({ data }: GenreChartProps) {
       <section className="bg-[#141414] border border-neutral-800 rounded-xl p-6 shadow-sm mb-8 text-center py-12 mt-8">
         <h2 className="text-xl font-bold mb-1 text-white">취향 분석</h2>
         <p className="text-sm text-neutral-400 mt-4">
-          아직 즐겨찾기한 영화가 없습니다.
+          아직 찜한 영화가 없습니다.
         </p>
       </section>
     );

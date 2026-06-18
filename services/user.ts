@@ -40,6 +40,6 @@ export async function getUserGenreStats(
     
   } catch (error) {
     console.error("유저 즐겨찾기 장르 분석 중 오류 발생:", error);
-    return [];
+    throw error;
   }
 }

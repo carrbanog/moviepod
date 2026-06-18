@@ -1,4 +1,3 @@
-// src/components/domain/profile/GenreChartContainer.tsx
 import { getUserGenreStats } from "@/services/user";
 import GenreChart from "./GenreChart";
 import ErrorFallback from "@/components/domain/layout/ErrorFallback"

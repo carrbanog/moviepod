@@ -4,7 +4,6 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ProfileCard from "@/components/domain/profile/ProfileCard";
 import GenreChartContainer from "@/components/domain/profile/GenreChartContainer";
 import FavoriteMoviesList from "@/components/domain/profile/FavoriteMoviesList";
-import { generateKeySync } from "crypto";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
