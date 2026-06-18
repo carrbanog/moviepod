@@ -1,5 +1,6 @@
 // components/domain/movie/MovieDetailContainer.tsx
 import Image from "next/image";
+import Link from "next/link";
 import { getMovieDetail, getMovieTrailer } from "@/services/tmdb";
 import FavoriteButton from "@/components/domain/user/FavoriteButton";
 import MovieTrailer from "./MovieTrailer";
@@ -15,7 +16,7 @@ export default async function MovieDetailContainer({
     getMovieDetail(id),
     getMovieTrailer(id),
   ]);
-  console.log("영화 상세 정보", movie)
+  console.log("영화 상세 정보", movie);
   return (
     <article className="flex flex-col gap-12 w-full">
       <div className="flex flex-col gap-8 md:flex-row">
@@ -50,7 +51,9 @@ export default async function MovieDetailContainer({
                 key={genre.id}
                 className="rounded-full bg-secondary px-3 py-1 text-sm"
               >
-                {genre.name}
+                <Link href={`/genre/${genre.id}?name=${genre.name}`}>
+                  {genre.name}
+                </Link>
               </li>
             ))}
           </ul>
