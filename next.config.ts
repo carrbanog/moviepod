@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
         pathname: "/t/p/**",
       },
     ],
+    formats: ['image/avif', 'image/webp'], // AVIF를 최우선으로 지원
+    domains: ['image.tmdb.org'],
   },
 };
 

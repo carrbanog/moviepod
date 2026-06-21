@@ -1,10 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react"; // 💡 useState, useEffect 추가
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { FavoriteMovieResponse, ToggleFavoritePayload } from "@/type/movie";
 import { getFavoritesActions, toggleFavoriteAction } from "@/actions/favorite";
@@ -17,17 +17,23 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
-  // 1. 유저의 전체 찜 목록 가져오기
   const { data: favorites = [] } = useQuery<FavoriteMovieResponse[]>({
     queryKey: ["favorites"],
     queryFn: () => getFavoritesActions(),
-    enabled: !!session?.user, // 로그인 상태일 때만 실행
+    enabled: !!session?.user,
   });
 
   const movieIdStr = String(movie.id);
-  const isFavorite = favorites.some((fav) => fav.movieId === movieIdStr);
+  const isFavoriteFromCache = favorites.some((fav) => fav.movieId === movieIdStr);
 
-  // 3. 찜하기 토글 (낙관적 업데이트 적용)
+  // 💡 [핵심] 0ms 즉시 반응을 위한 독립 로컬 상태 선언
+  const [localIsFavorite, setLocalIsFavorite] = useState(isFavoriteFromCache);
+
+  // 💡 로그인 직후나 캐시가 완전히 동기화되었을 때 로컬 상태를 맞춰줍니다.
+  useEffect(() => {
+    setLocalIsFavorite(isFavoriteFromCache);
+  }, [isFavoriteFromCache]);
+
   const toggleFavoriteMutation = useMutation({
     mutationFn: async () => {
       const payload: ToggleFavoritePayload = {
@@ -35,58 +41,40 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
         title: movie.title,
         poster_path: movie.poster_path,
         release_date: movie.release_date,
-        genres: movie.genres, // 없을 경우 undefined로 안전하게 전달됨
+        genres: movie.genres,
       };
       return await toggleFavoriteAction(payload);
     },
-
-    // [성능 최적화] 서버 응답을 기다리지 않고 화면의 하트를 즉시 변경합니다.
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["favorites"] });
+      const previousFavorites = queryClient.getQueryData<FavoriteMovieResponse[]>(["favorites"]);
 
-      // 기존 캐시 백업
-      const previousFavorites = queryClient.getQueryData<
-        FavoriteMovieResponse[]
-      >(["favorites"]);
-
-      // UI 강제 업데이트
       queryClient.setQueryData<FavoriteMovieResponse[]>(
         ["favorites"],
         (old = []) => {
           if (old.some((fav) => fav.movieId === movieIdStr)) {
-            // 이미 찜한 상태면 목록에서 제거
             return old.filter((fav) => fav.movieId !== movieIdStr);
           } else {
-            // 안 한 상태면 목록에 임시 추가 (화면 표시용)
-            const newFav = {
-              movieId: movieIdStr,
-              title: movie.title,
-              poster_path: movie.poster_path,
-              genres: movie.genres,
-              release_date: movie.release_date,
-            } as FavoriteMovieResponse;
+            const newFav = { movieId: movieIdStr, title: movie.title, poster_path: movie.poster_path } as FavoriteMovieResponse;
             return [...old, newFav];
           }
         },
       );
-
       return { previousFavorites };
     },
-    // 에러 발생 시 백업해둔 이전 상태로 롤백
     onError: (err, variables, context) => {
       if (context?.previousFavorites) {
         queryClient.setQueryData(["favorites"], context.previousFavorites);
+        // 💡 에러 발생 시 로컬 상태도 기존 찜 상태로 롤백
+        setLocalIsFavorite(context.previousFavorites.some((fav) => fav.movieId === movieIdStr));
       }
       toast.error(err.message);
     },
-
-    // 최종적으로 서버 데이터와 다시 동기화
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
   });
 
-  // 로그인하지 않은 경우의 UI
   if (!session) {
     return (
       <Button variant="outline" disabled className="gap-2">
@@ -95,22 +83,23 @@ export default function FavoriteButton({ movie }: FavoriteButtonProps) {
     );
   }
 
-  // 로그인한 경우의 UI
+  // 💡 버튼을 클릭했을 때의 동작 함수
+  const handleToggle = () => {
+    setLocalIsFavorite(!localIsFavorite); // 1. 누르자마자 0ms만에 하트 불빛 반전
+    toggleFavoriteMutation.mutate();      // 2. 서버 통신은 백그라운드에서 조용히 실행
+  };
+
   return (
     <Button
-      variant={isFavorite ? "default" : "outline"}
+      variant={localIsFavorite ? "default" : "outline"} // 💡 캐시 대신 localIsFavorite 기준 렌더링
       className={`gap-2 transition-colors ${
-        isFavorite
-          ? "bg-red-500 text-white hover:bg-red-600 border-red-500"
-          : ""
+        localIsFavorite ? "bg-red-500 text-white hover:bg-red-600 border-red-500" : ""
       }`}
-      disabled={toggleFavoriteMutation.isPending}
-      onClick={() => toggleFavoriteMutation.mutate()}
+      // ❌ disabled={toggleFavoriteMutation.isPending} 을 과감히 제거하여 버튼 잠김 현상 방지
+      onClick={handleToggle}
     >
-      <Heart
-        className={`h-4 w-4 ${isFavorite ? "fill-current text-white" : ""}`}
-      />
-      {isFavorite ? "찜 완료" : "내 보관함에 저장"}
+      <Heart className={`h-4 w-4 ${localIsFavorite ? "fill-current text-white" : ""}`} />
+      {localIsFavorite ? "찜 완료" : "내 보관함에 저장"}
     </Button>
   );
 }

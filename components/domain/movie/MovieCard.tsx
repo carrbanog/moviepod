@@ -34,4 +34,4 @@ function MovieCard({ id, title, poster_path, priority, release_date }: MovieCard
   );
 }
 
-export default (MovieCard);
+export default memo(MovieCard);
