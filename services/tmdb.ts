@@ -1,13 +1,13 @@
-"use server"
+"use server";
 
-import { MovieResponse } from "@/type/movie";
+import { MovieResponse, Movie } from "@/type/movie";
 import { MovieDetailResponse } from "@/type/movie";
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
 const API_KEY = process.env.TMDB_API_KEY;
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-export async function getPopularMovies(): Promise<MovieResponse> {
+export async function getPopularMovies(): Promise<Movie[]> {
   // [최적화 측정 포인트] Next.js의 fetch 캐싱(revalidate)을 활용합니다.
   // 배포 후 데이터 갱신 주기와 LCP 등을 측정해 캐싱 시간을 조절할 수 있습니다.
   // await delay(800);
@@ -19,13 +19,12 @@ export async function getPopularMovies(): Promise<MovieResponse> {
   if (!res.ok) {
     throw new Error("인기 영화 목록을 불러오는데 실패했습니다.");
   }
-
-  return res.json();
+  const data: MovieResponse = await res.json();
+  return data.results;
 }
 
 // 영화 검색
-export async function searchMovies(query: string) {
-
+export async function searchMovies(query: string): Promise<Movie[]> {
   const res = await fetch(
     `${TMDB_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&language=ko-KR&page=1&api_key=${API_KEY}`,
     { cache: "no-store" }, // 검색 결과는 실시간성이 중요하므로 캐싱하지 않음
@@ -36,42 +35,26 @@ export async function searchMovies(query: string) {
     throw new Error("검색 결과를 가져오는데 실패했습니다.");
   }
 
-  const data = await res.json();
+  const data: MovieResponse = await res.json();
+  console.log("영화 검색 데이터", data);
   return data.results; // 💡 컴포넌트가 바로 쓰기 편하게 배열만 쏙 뽑아서 리턴!
 }
 
-//장르 검색
-// export async function getMoviesByGenre(genreId: string) {
-//   const pageRequests = Array.from({ length: 5 }, (_, i) => i + 1).map((page) =>
-//     fetch(
-//       `${TMDB_BASE_URL}/discover/movie?with_genres=${genreId}&language=ko-KR&page=${page}&sort_by=popularity.desc&api_key=${API_KEY}`,
-//       { next: { revalidate: 3600 } },
-//     ).then((res) => {
-//       if (!res.ok) throw new Error("TMDB API 에러");
-//       return res.json();
-//     }),
-//   );
-
-//   const pagesData = await Promise.all(pageRequests);
-
-//   return pagesData.flatMap((data) => data.results);
-// }
-
-//장르 검색 최적화 후
-export async function getMoviesByGenre(genreId: string , page: number) {
+export async function getMoviesByGenre(
+  genreId: string,
+  page: number,
+): Promise<Movie[]> {
   const res = await fetch(
     `${TMDB_BASE_URL}/discover/movie?with_genres=${genreId}&language=ko-KR&page=${page}&sort_by=popularity.desc&api_key=${API_KEY}`,
-    { next: { revalidate: 3600 } }, 
+    { next: { revalidate: 3600 } },
   );
 
   if (!res.ok) {
     throw new Error("TMDB API 에러");
   }
-
-  const data = await res.json();
+  const data: MovieResponse = await res.json();
   return data.results;
 }
-
 
 export async function getMovieDetail(id: string): Promise<MovieDetailResponse> {
   const res = await fetch(
@@ -82,8 +65,9 @@ export async function getMovieDetail(id: string): Promise<MovieDetailResponse> {
   if (!res.ok) {
     throw new Error("영화 상세 정보를 불러오는데 실패했습니다.");
   }
-
-  return res.json();
+  const data: MovieDetailResponse = await res.json();
+  console.log("영화 상세 정보 서버", data);
+  return data;
 }
 
 // 영화 예고편
@@ -105,7 +89,6 @@ export async function getMovieTrailer(id: string): Promise<string | null> {
         data = await enRes.json();
       }
     }
-    console.log("tmdb 요청 트레일러 데이터", data);
 
     const trailer = data.results?.find(
       (vid: any) => vid.site === "YouTube" && vid.type === "Trailer",
