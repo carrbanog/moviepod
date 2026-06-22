@@ -17,8 +17,6 @@ export default function AuthButton({ session }: AuthButtonProps) {
   const authError = searchParams.get("error");
   const router = useRouter();
 
-  console.log("AuthButton 렌더링, session:", session);
-  console.log("AuthButton 렌더링, authError:", authError);
 
   useEffect(() => {
     if (authError) {

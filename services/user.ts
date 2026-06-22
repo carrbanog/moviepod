@@ -34,7 +34,6 @@ export async function getUserGenreStats(
     });
 
     const statsArray = Object.values(genreStats);
-    console.log("장르 반환", statsArray)
     // 💡 빈도수(count)가 높은 순서대로 내림차순 정렬하여 반환합니다.
     return [...statsArray].sort((a, b) => b.count - a.count);
     

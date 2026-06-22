@@ -14,7 +14,6 @@ export default async function FavoriteGenreMovieList({
 
   try {
     const data = await getMoviesByGenre(String(genreId), 1);
-    console.log("좋아하는 장르 영화", data);
     movies = data.slice(0, 5);
   } catch (error) {
     console.error("좋아하는 장르 영화 로딩 실패:", error);
