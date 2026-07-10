@@ -1,22 +1,17 @@
 "use client";
 
-import { Session } from "next-auth";
 import Link from "next/link";
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react"; // 🚀 useSession 추가
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { User } from "lucide-react";
 
-interface AuthButtonProps {
-  session: Session | null;
-}
-
-export default function AuthButton({ session }: AuthButtonProps) {
+export default function AuthButton() {
+  const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const authError = searchParams.get("error");
   const router = useRouter();
-
 
   useEffect(() => {
     if (authError) {
@@ -25,9 +20,13 @@ export default function AuthButton({ session }: AuthButtonProps) {
       } else {
         toast.error("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
       }
-      router.replace("/"); // 2단계 공통 처리
+      router.replace("/");
     }
   }, [authError, router]);
+
+  if (status === "loading") {
+    return <div className="h-9 w-20 md:w-24 bg-muted rounded-md animate-pulse" />;
+  }
 
   if (session) {
     return (
@@ -36,7 +35,6 @@ export default function AuthButton({ session }: AuthButtonProps) {
           href="/profile"
           className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
-          {/* 선택 사항: 유저 아바타 이미지가 없다면 lucide 아이콘 배치 */}
           <User className="h-4 w-4" />
           <span>{session.user?.name}님</span>
         </Link>
@@ -50,7 +48,6 @@ export default function AuthButton({ session }: AuthButtonProps) {
     );
   }
 
-  // 비로그인 상태일 때 (구글 로그인 버튼 렌더링)
   return (
     <button
       onClick={() => signIn("google")}

@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: false,
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? { exclude: ["error", "warn"] }
+        : false,
+  },
   images: {
     remotePatterns: [
       {
@@ -17,8 +23,8 @@ const nextConfig: NextConfig = {
         pathname: "/t/p/**",
       },
     ],
-    formats: ['image/avif', 'image/webp'], // AVIF를 최우선으로 지원
-    domains: ['image.tmdb.org'],
+    formats: ["image/avif", "image/webp"], // AVIF를 최우선으로 지원
+    domains: ["image.tmdb.org"],
   },
 };
 

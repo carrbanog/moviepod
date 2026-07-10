@@ -1,20 +1,12 @@
 import Link from "next/link";
-import { getServerSession } from "next-auth/next";
 import AuthButton from "../auth/AuthButton";
 import SearchBar from "@/components/domain/search/SearchBar";
 import { Suspense } from "react";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import GenreSidebar from "@/components/domain/layout/GenreSidebar";
 
-export default async function Header() {
-  let session = null;
-  try {
-    session = await getServerSession(authOptions);
-  } catch (error) {
-    console.error("세션을 가져오는 중 오류 발생:", error);
-  }
-
+export default function Header() {
+  // 🚀 서버 세션 조회 로직을 걷어내어 헤더를 정적으로 유지합니다.
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto flex flex-wrap md:flex-nowrap items-center justify-between px-4 py-3 md:h-16 md:py-0">
@@ -29,7 +21,8 @@ export default async function Header() {
 
         <div className="order-2 md:order-3 flex items-center space-x-2 md:space-x-4">
           <Suspense fallback={<div className="h-9 w-20 md:w-24 bg-muted rounded-md animate-pulse"></div>}>
-            <AuthButton session={session} />
+            {/* session props를 넘기지 않습니다. */}
+            <AuthButton /> 
           </Suspense>
           <GenreSidebar />
         </div>
