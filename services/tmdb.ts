@@ -17,10 +17,13 @@ export async function getPopularMovies(): Promise<Movie[]> {
 }
 
 // 영화 검색
-export async function searchMovies(query: string): Promise<Movie[]> {
+export async function searchMovies(query: string, options?: { signal?: AbortSignal }): Promise<Movie[]> {
   const data = await tmdbFetch<MovieResponse>(
     `/search/movie?query=${encodeURIComponent(query)}&language=ko-KR&page=1&api_key=${API_KEY}`,
-    { cache: "no-store" },
+    { 
+      cache: "no-store",
+      signal: options?.signal
+    },
     "검색 결과를 가져오는데 실패했습니다."
   );
   return data.results;

@@ -62,7 +62,7 @@ export default function GenreMovieListClient({
               id={movie.id}
               title={movie.title}
               poster_path={movie.poster_path}
-              priority={index < 5}
+              priority={index === 0}
               release_date={movie.release_date}
             />
           </li>

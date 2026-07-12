@@ -1,6 +1,6 @@
 import Image from "next/image";
-import {memo} from "react"
-import  Link from "next/link"; 
+import { memo } from "react";
+import Link from "next/link";
 interface MovieCardProps {
   id: string | number;
   title: string;
@@ -9,7 +9,13 @@ interface MovieCardProps {
   release_date: string;
 }
 
-function MovieCard({ id, title, poster_path, priority, release_date }: MovieCardProps) {
+function MovieCard({
+  id,
+  title,
+  poster_path,
+  priority,
+  release_date,
+}: MovieCardProps) {
   return (
     <Link
       href={`/movie/${id}`}
