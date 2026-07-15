@@ -31,6 +31,7 @@ export default async function MovieDetailContainer({
             sizes="(max-width: 768px) 100vw, 300px"
             className="object-cover"
             priority
+            fetchPriority='high'
           />
         </figure>
 
