@@ -26,6 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="dark">
+      <head>
+        <link rel="preconnect" href="https://image.tmdb.org" />
+      </head>
       <body className={`${bebasNeue.variable} antialiased`}>
         <Toaster richColors position="top-right" theme='system' />
         <AuthProvider>
