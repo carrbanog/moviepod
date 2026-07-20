@@ -3,9 +3,12 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getMovieDetail } from "@/services/tmdb";
-import FavoriteButton from "@/components/domain/user/FavoriteButton";
+// import { getMovieDetail, getMovieTrailer } from "@/services/tmdb";
 import TrailerSection from "@/components/domain/movie/TrailerSection";
-
+// import FavoriteButton from "@/components/domain/user/FavoriteButton";
+// import MovieTrailer from "@/components/domain/movie/MovieTrailer";
+// import dynamic from "next/dynamic";
+import FavoriteButtonDynamic from "@/components/domain/user/FavoriteButtonDynamic";
 
 interface MovieDetailContainerProps {
   id: string;
@@ -18,6 +21,7 @@ export default async function MovieDetailContainer({
   //   getMovieDetail(id),
   //   getMovieTrailer(id),
   // ]);
+
   const movie = await getMovieDetail(id);
   console.log("영화 상세 정보", movie);
   return (
@@ -31,7 +35,7 @@ export default async function MovieDetailContainer({
             sizes="(max-width: 768px) 100vw, 300px"
             className="object-cover"
             priority
-            fetchPriority='high'
+            fetchPriority="high"
           />
         </figure>
 
@@ -40,7 +44,9 @@ export default async function MovieDetailContainer({
           <h1 className="text-4xl font-bold">{movie.title}</h1>
 
           <div>
-            <FavoriteButton movie={movie} />
+            <FavoriteButtonDynamic movie={movie} />
+            
+            {/* <FavoriteButton movie={movie} /> */}
           </div>
 
           {movie.tagline && (
@@ -76,7 +82,23 @@ export default async function MovieDetailContainer({
 
       <section>
         <h2 className="text-2xl font-bold mb-4">🎬 메인 예고편</h2>
-        <Suspense fallback={<div className="h-[300px] w-full bg-muted animate-pulse rounded-xl" />}>
+        {/* {trailerKey ? (
+          <MovieTrailer trailerKey={trailerKey} movieTitle={movie.title} />
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed bg-muted/40 py-12 text-center">
+            <p className="text-lg font-medium text-muted-foreground">
+              📺 등록된 메인 예고편이 없습니다.
+            </p>
+            <p className="text-sm text-muted-foreground/70 mt-1">
+              다른 언어나 관련 영상 리소스가 존재하지 않는 영화입니다.
+            </p>
+          </div>
+        )} */}
+        <Suspense
+          fallback={
+            <div className="h-[300px] w-full bg-muted animate-pulse rounded-xl" />
+          }
+        >
           <TrailerSection id={id} movieTitle={movie.title} />
         </Suspense>
       </section>

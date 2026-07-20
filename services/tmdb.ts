@@ -35,7 +35,7 @@ export async function getMoviesByGenre(
 ): Promise<Movie[]> {
   const data = await tmdbFetch<MovieResponse>(
     `/discover/movie?with_genres=${genreId}&language=ko-KR&page=${page}&sort_by=popularity.desc&api_key=${API_KEY}`,
-    { next: { revalidate: 3600 } },
+    { cache: 'no-store' },
     "장르별 영화 목록을 불러오는데 실패했습니다."
   );
   
@@ -45,7 +45,7 @@ export async function getMoviesByGenre(
 export async function getMovieDetail(id: string): Promise<MovieDetailResponse> {
   return tmdbFetch<MovieDetailResponse>(
     `/movie/${id}?language=ko-KR&api_key=${API_KEY}`,
-    { next: { revalidate: 3600 } },
+    { cache: 'no-store'},
     "영화 상세 정보를 불러오는데 실패했습니다."
   );
 }
