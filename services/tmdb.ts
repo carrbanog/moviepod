@@ -1,6 +1,6 @@
 "use server";
 
-import { MovieResponse, Movie } from "@/type/movie";
+import { MovieResponse, Movie, MovieTrailerResponse } from "@/type/movie";
 import { MovieDetailResponse } from "@/type/movie";
 import { tmdbFetch } from "@/lib/tmdbClient";
 
@@ -35,7 +35,7 @@ export async function getMoviesByGenre(
 ): Promise<Movie[]> {
   const data = await tmdbFetch<MovieResponse>(
     `/discover/movie?with_genres=${genreId}&language=ko-KR&page=${page}&sort_by=popularity.desc&api_key=${API_KEY}`,
-    { cache: 'no-store' },
+    { next: { revalidate: 1800 } },
     "장르별 영화 목록을 불러오는데 실패했습니다."
   );
   
@@ -45,7 +45,7 @@ export async function getMoviesByGenre(
 export async function getMovieDetail(id: string): Promise<MovieDetailResponse> {
   return tmdbFetch<MovieDetailResponse>(
     `/movie/${id}?language=ko-KR&api_key=${API_KEY}`,
-    { cache: 'no-store'},
+    { next: { revalidate: 3600 } },
     "영화 상세 정보를 불러오는데 실패했습니다."
   );
 }
@@ -54,14 +54,14 @@ export async function getMovieDetail(id: string): Promise<MovieDetailResponse> {
 export async function getMovieTrailer(id: string): Promise<string | null> {
   try {
     // 한국어 예고편 데이터 요청 (에러 발생 시 catch 블록으로 이동하도록 메시지 생략 가능)
-    let data = await tmdbFetch<any>(
+    let data = await tmdbFetch<MovieTrailerResponse>(
       `/movie/${id}/videos?language=ko-KR&api_key=${API_KEY}`,
       { next: { revalidate: 3600 } }
     );
-
+    
     // 한국어 결과가 없거나 비어있다면 영어 데이터로 재요청
     if (!data.results || data.results.length === 0) {
-      data = await tmdbFetch<any>(
+      data = await tmdbFetch<MovieTrailerResponse>(
         `/movie/${id}/videos?language=en-US&api_key=${API_KEY}`,
         { next: { revalidate: 3600 } }
       );
@@ -69,12 +69,12 @@ export async function getMovieTrailer(id: string): Promise<string | null> {
 
     // 유튜브 예고편(Trailer) 찾기
     const trailer = data.results?.find(
-      (vid: any) => vid.site === "YouTube" && vid.type === "Trailer"
+      (vid) => vid.site === "YouTube" && vid.type === "Trailer"
     );
 
     // 예고편이 없다면 유튜브 영상 아무거나 대체재(Fallback)로 선택
     const fallbackVideo = data.results?.find(
-      (vid: any) => vid.site === "YouTube"
+      (vid) => vid.site === "YouTube"
     );
 
     return trailer ? trailer.key : fallbackVideo ? fallbackVideo.key : null;
