@@ -22,15 +22,33 @@ export interface MovieDetailResponse extends Movie {
   tagline: string; // 영화 태그라인 (짧은 슬로건)
 }
 
-export type FavoriteMovieResponse = Pick<
-  MovieDetailResponse, 
-  'title' | 'poster_path' | 'genres' | 'release_date'
-> & {
-  // DB 관리용 필드나 찜한 시간 같은 커스텀 필드를 & 연산자로 가볍게 추가할 수 있습니다.
+export interface FavoriteMovieResponse 
+  extends Pick<MovieDetailResponse, 'title' | 'poster_path' | 'genres' | 'release_date'> {
   _id: string;
-  movieId: string; 
+  movieId: string;
   addedAt?: string;
-};
+}
+
+//비디오 예고편 객체 타입
+export interface MovieTrailer {
+  id: string;
+  iso_639_1: string;
+  iso_3166_1: string;
+  key: string;
+  name: string;
+  official: boolean;
+  published_at: string;
+  site: "YouTube" | "Vimeo" | string; // 자주 쓰이는 플랫폼 추론 및 하위 호환
+  size: number;
+  type: "Trailer" | "Teaser" | "Clip" | "Featurette" | "Behind the Scenes" | "Bloopers" | string;
+}
+
+// /movie/{id}/videos 응답 전체 타입
+export interface MovieTrailerResponse {
+  id: number;
+  results: MovieTrailer[];
+}
+
 
 // 좋아요 버튼을 누를 때 전달해 줄 movie 타입
 export interface ToggleFavoritePayload {
